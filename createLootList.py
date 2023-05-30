@@ -66,19 +66,25 @@ def GenerateLootList(LootJson, Number, Sets, Distribution):
     DistributionNumbers = CalculateDistribution(Number, Distribution)
     for set in Sets:
         for i in range(0, DistributionNumbers[set]):
-            LootList.append(GetRandomItem(LootJson[set]))
-            if len(LootList) >= Number:
-                return LootList
+            item = GetRandomItem(LootJson[set])
+            LootList.append(item)
+            LootJson[set].pop(item)
 
+            if len(LootJson[set]) < 1:
+                print('No more items in set: ' + set)
+                break
+            if len(LootList) >= Number:
+                print('Number of items in list: ' + str(len(LootList)))
+                return LootList
+            
+    print('Number of items in list: ' + str(len(LootList)))
     return LootList
 
 
 def main():
-    #print formated json
-    #print(json.dumps(LootJson, indent=4, sort_keys=True))
     args = ArgParser(sys.argv[1:])
     LootJson = json.load(open(args.jsonPath))
-    DistributionPercentages = {'Common': 50, 'Uncommon': 30, 'Rare': 15, 'Legendary': 5}
+    DistributionPercentages = {'Common': 60, 'Uncommon': 34, 'Rare': 5, 'Legendary': 1}
     SetsList = args.sets.split(',')
 
     LootList = GenerateLootList(LootJson, args.number, SetsList, DistributionPercentages)
