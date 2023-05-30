@@ -1,0 +1,42 @@
+{
+    "common": {
+        "item1": {
+            "Type": "armor",
+            "Attunement": "",
+            "DMG": "",
+            "Details": "Description of Item"
+        }
+    },
+    "uncommon": {
+        "item2": {
+            "Type": "weapon",
+            "Attunement": "Needs Attunement",
+            "DMG": "dmg 111",
+            "Details": "Description of Item"
+        }
+    },
+    "rare": {
+        "item2": {
+            "Type": "potion",
+            "Attunement": "Needs Attunement",
+            "DMG": "dmg 112",
+            "Details": "Description of Item"
+        }
+    },
+    "very rare": {
+        "item2": {
+            "Type": "weapon",
+            "Attunement": "Needs Attunement",
+            "DMG": "dmg 113",
+            "Details": "Description of Item"
+        }
+    },
+    "legendary": {
+        "item2": {
+            "Type": "weapon",
+            "Attunement": "Needs Attunement",
+            "DMG": "dmg 114",
+            "Details": "Description of Item"
+        }
+    }
+}
