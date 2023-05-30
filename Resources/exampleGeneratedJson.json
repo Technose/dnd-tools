@@ -16,7 +16,7 @@
         }
     },
     "rare": {
-        "item2": {
+        "item3": {
             "Type": "potion",
             "Attunement": "Needs Attunement",
             "DMG": "dmg 112",
@@ -24,7 +24,7 @@
         }
     },
     "very rare": {
-        "item2": {
+        "item4": {
             "Type": "weapon",
             "Attunement": "Needs Attunement",
             "DMG": "dmg 113",
@@ -32,7 +32,7 @@
         }
     },
     "legendary": {
-        "item2": {
+        "item5": {
             "Type": "weapon",
             "Attunement": "Needs Attunement",
             "DMG": "dmg 114",
