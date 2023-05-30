@@ -1,0 +1,94 @@
+{
+    "Common" : {
+        "commonItem1" : {
+            "name" : "Common Item 1",
+            "description" : "This is a common item.",
+            "type" : "common",
+            "value" : 1,
+            "weight" : 1
+        },
+        "commonItem2" : {
+            "name" : "Common Item 2",
+            "description" : "This is a common item.",
+            "type" : "common",
+            "value" : 1,
+            "weight" : 1
+        },
+        "commonItem3" : {
+            "name" : "Common Item 3",
+            "description" : "This is a common item.",
+            "type" : "common",
+            "value" : 1,
+            "weight" : 1
+        }
+    },
+    "Uncommon" : {
+        "UncommonItem1" : {
+            "name" : "Uncommon Item 1",
+            "description" : "This is an uncommon item.",
+            "type" : "uncommon",
+            "value" : 1,
+            "weight" : 1
+        },
+        "UncommonItem2" : {
+            "name" : "Uncommon Item 2",
+            "description" : "This is an uncommon item.",
+            "type" : "uncommon",
+            "value" : 1,
+            "weight" : 1
+        },
+        "UncommonItem3" : {
+            "name" : "Uncommon Item 3",
+            "description" : "This is an uncommon item.",
+            "type" : "uncommon",
+            "value" : 1,
+            "weight" : 1
+        }
+    },
+    "Rare" : {
+        "RareItem1" : {
+            "name" : "Rare Item 1",
+            "description" : "This is a rare item.",
+            "type" : "rare",
+            "value" : 1,
+            "weight" : 1
+        },
+        "RareItem2" : {
+            "name" : "Rare Item 2",
+            "description" : "This is a rare item.",
+            "type" : "rare",
+            "value" : 1,
+            "weight" : 1
+        },
+        "RareItem3" : {
+            "name" : "Rare Item 3",
+            "description" : "This is a rare item.",
+            "type" : "rare",
+            "value" : 1,
+            "weight" : 1
+        }
+    },
+    "Legendary" : {
+        "LegendaryItem1" : {
+            "name" : "Legendary Item 1",
+            "description" : "This is a legendary item.",
+            "type" : "legendary",
+            "value" : 1,
+            "weight" : 1
+        },
+        "LegendaryItem2" : {
+            "name" : "Legendary Item 2",
+            "description" : "This is a legendary item.",
+            "type" : "legendary",
+            "value" : 1,
+            "weight" : 1
+        },
+        "LegendaryItem3" : {
+            "name" : "Legendary Item 3",
+            "description" : "This is a legendary item.",
+            "type" : "legendary",
+            "value" : 1,
+            "weight" : 1
+        }
+    } 
+}
