@@ -6,18 +6,18 @@ import argparse
 import math
 
 
-def ArgParser(args):
+def ArgParser(args, config):
     parser = argparse.ArgumentParser(description='Create a loot list for D&D')
     parser.add_argument('-n', '--number', type=int, default=10, help='Number of items to generate. Default: 10')
-    parser.add_argument('-s', '--sets', type=str, default='Common,Uncommon,Rare,Legendary', help='Comma deliminated list of which rarity of items to include in the list. --number must be equal to or greater than the number of sets included. Default: Common,Uncommon,Rare,Legendary')
+    parser.add_argument('-s', '--sets', type=str, default=config["Sets"], help='Comma deliminated list of which rarity of items to include in the list. --number must be equal to or greater than the number of sets included.')
     parser.add_argument('-j', '--jsonPath', type=str, default='./Resources/Loot.json', help='Path to the json file containing the loot. Default: ./Resources/Loot.json')
 
     parsedArgs = parser.parse_args(args)
-    VerifyArgs(parsedArgs)
+    VerifyArgs(parsedArgs, config)
 
     return parsedArgs
 
-def VerifyArgs(parser):
+def VerifyArgs(parser, config):
     if parser.number < 1:
         print('Number of items must be greater than 0')
         exit(1)
@@ -33,7 +33,7 @@ def VerifyArgs(parser):
         exit(1)
 
     for set in parser.sets.split(','):
-        if set not in ['Common', 'Uncommon', 'Rare', 'Legendary']:
+        if set not in config['Sets'].split(','):
             print('Invalid set: ' + set)
             print('Valid sets: Common, Uncommon, Rare, Legendary')
             exit(1)
@@ -82,9 +82,10 @@ def GenerateLootList(LootJson, Number, Sets, Distribution):
 
 
 def main():
-    args = ArgParser(sys.argv[1:])
+    config = json.load(open('./Configs/config.json')) #refactor this into a real config object
+    args = ArgParser(sys.argv[1:], config)
     LootJson = json.load(open(args.jsonPath))
-    DistributionPercentages = {'Common': 60, 'Uncommon': 34, 'Rare': 5, 'Legendary': 1}
+    DistributionPercentages = config['DistributionPercentages']
     SetsList = args.sets.split(',')
 
     LootList = GenerateLootList(LootJson, args.number, SetsList, DistributionPercentages)
