@@ -100,17 +100,34 @@ def writeJsonToFile(lootJson, path):
         exit(1)
     print('Generated Json file at ' + path)
 
+def outputImportantStatsForJson(lootJson):
+    totalItems = 0
+    itemsPerRarity = {}
+    for rarity in lootJson.keys():
+        itemsPerRarity[rarity] = len(lootJson[rarity])
+        totalItems += len(lootJson[rarity])
+    print('Total Items: ' + str(totalItems))
+    print('Items Per Rarity: ' + str(itemsPerRarity))
+    Sets = ""
+    for rarity in lootJson.keys():
+        Sets += rarity + ","
+    print('Sets: ' + Sets[:-1])
+    
+    distribution = {}
+    for rarity in lootJson.keys():
+        distribution[rarity] = round(itemsPerRarity[rarity] / totalItems * 100)
+
+    print('Distribution Percentages: ' + str(distribution))
+
 def main():
     args = argParse(sys.argv[1:])
     csv = getCSV(args.path)
     keyDetails = getJsonKeysFromCSV(csv)
 
     lootJson = addItemsToLootJson(csv, keyDetails, {})
-    lootJson = json.dumps(lootJson, indent=4)
+    outputImportantStatsForJson(lootJson)
 
     writeJsonToFile(lootJson, args.output)
-    print(lootJson)
-
     return
 
 if __name__ == "__main__":
