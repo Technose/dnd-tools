@@ -89,9 +89,16 @@ def addItemsToLootJson(csv, keyDetails, lootJson):
 
     return lootJson
 
-def writeJsonToFile(json, path):
-    with open(path, 'w+') as file:
-        file.write(json)
+def writeJsonToFile(lootJson, path):
+    lootJson = json.dumps(lootJson, indent=4)
+
+    try:
+        with open(path, 'w+') as file:
+            file.write(lootJson)
+    except:
+        print('Error writing to file')
+        exit(1)
+    print('Generated Json file at ' + path)
 
 def main():
     args = argParse(sys.argv[1:])
