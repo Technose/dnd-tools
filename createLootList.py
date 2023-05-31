@@ -81,7 +81,7 @@ def GenerateLootList(LootJson, Number, Sets, Distribution):
         for i in range(0, DistributionNumbers[set]):
             loop += 1
             item = GetRandomItem(LootJson[set])
-            LootList.append(item)
+            LootList.append({item: LootJson[set][item]})
             LootJson[set].pop(item)
 
             if len(LootJson[set]) < 1:
@@ -101,6 +101,21 @@ def formatOutput(LootList, LootJson, diceToUse, Dice):
     output = ''
     diceRangeList = diceDistributionBuilder(LootList, diceToUse, Dice)
 
+    if len(LootList) != len(diceRangeList):
+        print('Something went wrong, the number of loot items doesn not match the dice ranges. Internal code error.')
+        exit(1)
+
+    for x, item in enumerate(LootList):
+        itemKey = list(item.keys())[0]
+        itemData = list(item.values())[0]
+        itemEntry = f"\n{diceRangeList[x]}: {itemKey}\n"
+
+        for key in itemData.keys():
+            itemEntry += f"    {key}: {itemData[key]}\n"
+
+        output += itemEntry
+
+    print(output)
     return
 
 def diceDistributionBuilder(LootList, diceToUse, Dice):
@@ -133,7 +148,7 @@ def diceDistributionBuilder(LootList, diceToUse, Dice):
 
     print(diceRangeList)
 
-    return
+    return diceRangeList
 
 
 def main():

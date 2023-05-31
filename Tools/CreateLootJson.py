@@ -57,7 +57,6 @@ def addItemToLootJson(csvLine, keys, lootJson):
     itemRarity = itemData[keyDetails.index('Rarity')]
 
     itemData, keyDetails = removeIndexFromTwoLists(keyDetails.index('Name'), itemData, keyDetails)
-    itemData, keyDetails = removeIndexFromTwoLists(keyDetails.index('Rarity'), itemData, keyDetails)
 
     itemDetails = {}
     for i in range(len(keyDetails)):
