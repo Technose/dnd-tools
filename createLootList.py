@@ -22,6 +22,10 @@ def VerifyArgs(parser, config):
         print('Number of items must be greater than 0')
         exit(1)
 
+    if parser.number > 100:
+        print('I promise you do not need more than 100 items in this list.')
+        exit(1)
+
     if parser.sets == '':
         print('Sets must be specified')
         exit(1)
@@ -37,6 +41,12 @@ def VerifyArgs(parser, config):
             print('Invalid set: ' + set)
             print('Valid sets: Common, Uncommon, Rare, Legendary')
             exit(1)
+
+def matchNumberToDice(number, dice):
+    for key in dice.keys():
+        if number <= dice[key]:
+            return key
+    return
 
 def GetItemSets(LootJson):
     #get keys from json
@@ -58,6 +68,8 @@ def CalculateDistribution(Number, Distribution):
         else:
             DistributionNumbers[set] = percent
 
+    print('Distribution: ' + str(DistributionNumbers))
+
     return DistributionNumbers
         
 
@@ -65,7 +77,9 @@ def GenerateLootList(LootJson, Number, Sets, Distribution):
     LootList = []
     DistributionNumbers = CalculateDistribution(Number, Distribution)
     for set in Sets:
+        loop = 0
         for i in range(0, DistributionNumbers[set]):
+            loop += 1
             item = GetRandomItem(LootJson[set])
             LootList.append(item)
             LootJson[set].pop(item)
@@ -74,11 +88,52 @@ def GenerateLootList(LootJson, Number, Sets, Distribution):
                 print('No more items in set: ' + set)
                 break
             if len(LootList) >= Number:
-                print('Number of items in list: ' + str(len(LootList)))
+                print('Enough Items Added. Number of items in list: ' + str(len(LootList)))
                 return LootList
-            
+        print('loop: ' + str(loop))
+    
+    print('Sets :' + str(Sets))
+    print('Number: ' + str(Number))
     print('Number of items in list: ' + str(len(LootList)))
     return LootList
+
+def formatOutput(LootList, LootJson, diceToUse, Dice):
+    output = ''
+    diceRangeList = diceDistributionBuilder(LootList, diceToUse, Dice)
+
+    return
+
+def diceDistributionBuilder(LootList, diceToUse, Dice):
+    LootListSize = len(LootList)
+    print(f"{Dice[diceToUse]} / {LootListSize}")
+    diceRange = round(Dice[diceToUse] / LootListSize)
+    diceRangeBonus = Dice[diceToUse] % LootListSize
+
+    print('Dice to use: ' + diceToUse)
+    print(diceRange)
+    print(diceRangeBonus)
+
+    diceRangeList = []
+
+    for item in range(len(LootList)):
+        diceRangeList.append(diceRange)
+        if diceRangeBonus > 0:
+            diceRangeList[item] += 1
+            diceRangeBonus -= 1
+
+    print(diceRangeList)
+    print(sum(diceRangeList))
+
+    number = 1
+
+    for i in range(len(diceRangeList)):
+        tmpNum = diceRangeList[i]
+        diceRangeList[i] = f"{number}-{number + diceRangeList[i] - 1}"
+        number += tmpNum
+
+    print(diceRangeList)
+
+    return
 
 
 def main():
@@ -86,11 +141,17 @@ def main():
     args = ArgParser(sys.argv[1:], config)
     LootJson = json.load(open(args.jsonPath))
     DistributionPercentages = config['DistributionPercentages']
+    Dice = config['Dice']
+
     SetsList = args.sets.split(',')
+    diceToUse = matchNumberToDice(args.number, Dice)
 
     LootList = GenerateLootList(LootJson, args.number, SetsList, DistributionPercentages)
-
     print(LootList)
+
+    output = formatOutput(LootList, LootJson, diceToUse, Dice)
+
+    print(output)
 
     return LootList
 

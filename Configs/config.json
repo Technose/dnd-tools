@@ -1,4 +1,22 @@
 {
-    "DistributionPercentages" : {"uncommon": 28, "rare": 32, "very rare": 22, "legendary": 14, "artifact": 2, "sentient": 1, "common": 1},
-    "Sets" : "uncommon,rare,very rare,legendary,common"
+    "DistributionPercentages" : {
+        "common": 1,
+        "uncommon": 28, 
+        "rare": 32, 
+        "very rare": 22, 
+        "legendary": 14, 
+        "artifact": 2, 
+        "sentient": 1
+    },
+
+    "Sets" : "uncommon,rare,very rare,legendary,common,artifact,sentient",
+    
+    "Dice" : {
+        "d6" : 6,
+        "d8" : 8,
+        "d10" : 10,
+        "d12" : 12,
+        "d20" : 20,
+        "d100" : 100
+    }
 }
