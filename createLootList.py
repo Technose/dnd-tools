@@ -111,12 +111,11 @@ def formatOutput(LootList, LootJson, diceToUse, Dice):
         itemEntry = f"\n{diceRangeList[x]}: {itemKey}\n"
 
         for key in itemData.keys():
-            itemEntry += f"    {key}: {itemData[key]}\n"
+            itemEntry += f"       {key}: {itemData[key]}\n"
 
         output += itemEntry
 
-    print(output)
-    return
+    return output
 
 def diceDistributionBuilder(LootList, diceToUse, Dice):
     LootListSize = len(LootList)
@@ -143,7 +142,10 @@ def diceDistributionBuilder(LootList, diceToUse, Dice):
 
     for i in range(len(diceRangeList)):
         tmpNum = diceRangeList[i]
-        diceRangeList[i] = f"{number}-{number + diceRangeList[i] - 1}"
+        if number == (number + diceRangeList[i] - 1):
+            diceRangeList[i] = f"{number}"
+        else:
+            diceRangeList[i] = f"{number}-{number + diceRangeList[i] - 1}"
         number += tmpNum
 
     print(diceRangeList)
@@ -168,7 +170,7 @@ def main():
 
     print(output)
 
-    return LootList
+    return
 
 if __name__ == "__main__":
     main()

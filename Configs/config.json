@@ -9,7 +9,7 @@
         "sentient": 1
     },
 
-    "Sets" : "uncommon,rare,very rare,legendary,common,artifact,sentient",
+    "Sets" : "common,uncommon,rare,very rare,legendary,artifact,sentient",
     
     "Dice" : {
         "d6" : 6,
