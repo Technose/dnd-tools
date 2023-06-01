@@ -68,7 +68,7 @@ def CalculateDistribution(Number, Distribution):
         else:
             DistributionNumbers[set] = percent
 
-    print('Distribution: ' + str(DistributionNumbers))
+    #print('Distribution: ' + str(DistributionNumbers))
 
     return DistributionNumbers
         
@@ -90,15 +90,15 @@ def GenerateLootList(LootJson, Number, Sets, Distribution):
             if len(LootList) >= Number:
                 print('Enough Items Added. Number of items in list: ' + str(len(LootList)))
                 return LootList
-        print('loop: ' + str(loop))
+        #print('loop: ' + str(loop))
     
-    print('Sets :' + str(Sets))
-    print('Number: ' + str(Number))
-    print('Number of items in list: ' + str(len(LootList)))
+    #print('Sets :' + str(Sets))
+    #print('Number: ' + str(Number))
+    #print('Number of items in list: ' + str(len(LootList)))
     return LootList
 
-def formatOutput(LootList, LootJson, diceToUse, Dice):
-    output = ''
+def formatOutput(LootList, diceToUse, Dice):
+    output = f'\nRoll a {diceToUse} to determine your loot.\n\n'
     diceRangeList = diceDistributionBuilder(LootList, diceToUse, Dice)
 
     if len(LootList) != len(diceRangeList):
@@ -119,13 +119,13 @@ def formatOutput(LootList, LootJson, diceToUse, Dice):
 
 def diceDistributionBuilder(LootList, diceToUse, Dice):
     LootListSize = len(LootList)
-    print(f"{Dice[diceToUse]} / {LootListSize}")
+    #print(f"{Dice[diceToUse]} / {LootListSize}")
     diceRange = round(Dice[diceToUse] / LootListSize)
     diceRangeBonus = Dice[diceToUse] % LootListSize
 
-    print('Dice to use: ' + diceToUse)
-    print(diceRange)
-    print(diceRangeBonus)
+    #print('Dice to use: ' + diceToUse)
+    #print(diceRange)
+    #print(diceRangeBonus)
 
     diceRangeList = []
 
@@ -135,8 +135,8 @@ def diceDistributionBuilder(LootList, diceToUse, Dice):
             diceRangeList[item] += 1
             diceRangeBonus -= 1
 
-    print(diceRangeList)
-    print(sum(diceRangeList))
+    #print(diceRangeList)
+    #print(sum(diceRangeList))
 
     number = 1
 
@@ -148,7 +148,7 @@ def diceDistributionBuilder(LootList, diceToUse, Dice):
             diceRangeList[i] = f"{number}-{number + diceRangeList[i] - 1}"
         number += tmpNum
 
-    print(diceRangeList)
+    #print(diceRangeList)
 
     return diceRangeList
 
@@ -164,9 +164,9 @@ def main():
     diceToUse = matchNumberToDice(args.number, Dice)
 
     LootList = GenerateLootList(LootJson, args.number, SetsList, DistributionPercentages)
-    print(LootList)
+    #print(LootList)
 
-    output = formatOutput(LootList, LootJson, diceToUse, Dice)
+    output = formatOutput(LootList, diceToUse, Dice)
 
     print(output)
 
