@@ -3,29 +3,29 @@ import os
 import sys
 import argparse
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from dndpy import logger
+
 def argParse(args):
     parser = argparse.ArgumentParser(description='Create Json File')
     parser.add_argument('--path', '-p', type=str, required=True, help='Path of the CSV file')
     parser.add_argument('--output', '-o', type=str, required=True, help='Path of the output file')
     parser.add_argument('--delimiter', '-d', type=str, required=False, default='|', help='Delimiter of the CSV file')
-
-    parsedArgs = parser.parse_args(args)
-
-    verifyArgs(parsedArgs)
+    parser.add_argument('--verbose', '-v', action='store_true', required=False, help='Verbose output')
     
-    return parsedArgs
+    return parser.parse_args(args)
 
-def verifyArgs(parser):
+def verifyArgs(parser, log):
     if parser.path == '':
-        print('Path must be specified')
+        log.Error('Path must be specified')
         exit(1)
 
     if not os.path.exists(parser.path):
-        print('Path does not exist')
+        log.Error('Path does not exist')
         exit(1)
 
     if not os.path.isfile(parser.path):
-        print('Path is not a file')
+        log.Error('Path is not a file')
         exit(1)
     
 def getCSV(path):
@@ -33,18 +33,18 @@ def getCSV(path):
         csv = file.read()
     return csv
 
-def getJsonKeysFromCSV(csv):
+def getJsonKeysFromCSV(csv, log):
     keys = csv.split('\n')[0].split('|')
-    verifyCSVKeysHasNameAndRarity(keys)
+    verifyCSVKeysHasNameAndRarity(keys, log)
 
     return keys
 
-def verifyCSVKeysHasNameAndRarity(keys):
+def verifyCSVKeysHasNameAndRarity(keys, log):
     if 'Name' not in keys:
-        print('CSV file does not have a Name column')
+        log.Error('CSV file does not have a Name column')
         exit(1)
     if 'Rarity' not in keys:
-        print('CSV file does not have a Rarity column')
+        log.Error('CSV file does not have a Rarity column')
         exit(1)
 
 def convertCSVLineToList(csvLine):
@@ -88,45 +88,47 @@ def addItemsToLootJson(csv, keyDetails, lootJson):
 
     return lootJson
 
-def writeJsonToFile(lootJson, path):
+def writeJsonToFile(lootJson, path, log):
     lootJson = json.dumps(lootJson, indent=4)
 
     try:
         with open(path, 'w+') as file:
             file.write(lootJson)
     except:
-        print('Error writing to file')
+        log.Error('Error writing to file')
         exit(1)
-    print('Generated Json file at ' + path)
+    log.Write('Generated Json file at ' + path)
 
-def outputImportantStatsForJson(lootJson):
+def outputImportantStatsForJson(lootJson, log):
     totalItems = 0
     itemsPerRarity = {}
     for rarity in lootJson.keys():
         itemsPerRarity[rarity] = len(lootJson[rarity])
         totalItems += len(lootJson[rarity])
-    print('Total Items: ' + str(totalItems))
-    print('Items Per Rarity: ' + str(itemsPerRarity))
+    log.Write('Total Items: ' + str(totalItems))
+    log.Write('Items Per Rarity: ' + str(itemsPerRarity))
     Sets = ""
     for rarity in lootJson.keys():
         Sets += rarity + ","
-    print('Sets: ' + Sets[:-1])
+    log.Write('Sets: ' + Sets[:-1])
     
     distribution = {}
     for rarity in lootJson.keys():
         distribution[rarity] = round(itemsPerRarity[rarity] / totalItems * 100)
 
-    print('Distribution Percentages: ' + str(distribution))
+    log.Write('Distribution Percentages: ' + str(distribution))
 
 def main():
     args = argParse(sys.argv[1:])
+    log = logger.Logger(args.verbose)
+    verifyArgs(args, log)
     csv = getCSV(args.path)
-    keyDetails = getJsonKeysFromCSV(csv)
+    keyDetails = getJsonKeysFromCSV(csv, log)
 
     lootJson = addItemsToLootJson(csv, keyDetails, {})
-    outputImportantStatsForJson(lootJson)
+    outputImportantStatsForJson(lootJson, log)
 
-    writeJsonToFile(lootJson, args.output)
+    writeJsonToFile(lootJson, args.output, log)
     return
 
 if __name__ == "__main__":

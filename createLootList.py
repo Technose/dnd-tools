@@ -4,6 +4,7 @@ import sys
 import json
 import argparse
 import math
+from dndpy import logger
 
 
 def ArgParser(args, config):
@@ -11,35 +12,35 @@ def ArgParser(args, config):
     parser.add_argument('-n', '--number', type=int, default=10, help='Number of items to generate. Default: 10')
     parser.add_argument('-s', '--sets', type=str, default=config["Sets"], help='Comma deliminated list of which rarity of items to include in the list. --number must be equal to or greater than the number of sets included.')
     parser.add_argument('-j', '--jsonPath', type=str, default='./Resources/Loot.json', help='Path to the json file containing the loot. Default: ./Resources/Loot.json')
+    parser.add_argument('--verbose', '-v', action='store_true', required=False, help='Verbose output')
 
     parsedArgs = parser.parse_args(args)
-    VerifyArgs(parsedArgs, config)
 
     return parsedArgs
 
-def VerifyArgs(parser, config):
+def VerifyArgs(parser, config, log):
     if parser.number < 1:
-        print('Number of items must be greater than 0')
+        log.Error('Number of items must be greater than 0')
         exit(1)
 
     if parser.number > 100:
-        print('I promise you do not need more than 100 items in this list.')
+        log.Error('I promise you do not need more than 100 items in this list.')
         exit(1)
 
     if parser.sets == '':
-        print('Sets must be specified')
+        log.Error('Sets must be specified')
         exit(1)
 
     if parser.number < len(parser.sets.split(',')):
-        print('Number of items must be greater than or equal to the number of sets included')
-        print('Number of items: ' + str(parser.number))
-        print('Number of sets: ' + str(len(parser.sets.split(','))))
+        log.Error('Number of items must be greater than or equal to the number of sets included')
+        log.Write('Number of items: ' + str(parser.number))
+        log.Write('Number of sets: ' + str(len(parser.sets.split(','))))
         exit(1)
 
     for set in parser.sets.split(','):
         if set not in config['Sets'].split(','):
-            print('Invalid set: ' + set)
-            print('Valid sets: Common, Uncommon, Rare, Legendary')
+            log.Error('Invalid set: ' + set)
+            log.Write('Valid sets: Common, Uncommon, Rare, Legendary')
             exit(1)
 
 def matchNumberToDice(number, dice):
@@ -59,7 +60,7 @@ def GetRandomItem(Set):
     Item = random.choice(list(Items))
     return Item
 
-def CalculateDistribution(Number, Distribution):
+def CalculateDistribution(Number, Distribution, log):
     DistributionNumbers = {}
     for set in Distribution.keys():
         percent = math.floor(Number * (Distribution[set] / 100))
@@ -68,14 +69,14 @@ def CalculateDistribution(Number, Distribution):
         else:
             DistributionNumbers[set] = percent
 
-    #print('Distribution: ' + str(DistributionNumbers))
+    log.Debug('Distribution: ' + str(DistributionNumbers))
 
     return DistributionNumbers
         
 
-def GenerateLootList(LootJson, Number, Sets, Distribution):
+def GenerateLootList(LootJson, Number, Sets, Distribution, log):
     LootList = []
-    DistributionNumbers = CalculateDistribution(Number, Distribution)
+    DistributionNumbers = CalculateDistribution(Number, Distribution, log)
     for set in Sets:
         loop = 0
         for i in range(0, DistributionNumbers[set]):
@@ -85,24 +86,24 @@ def GenerateLootList(LootJson, Number, Sets, Distribution):
             LootJson[set].pop(item)
 
             if len(LootJson[set]) < 1:
-                print('No more items in set: ' + set)
+                log.Write('No more items in set: ' + set)
                 break
             if len(LootList) >= Number:
-                print('Enough Items Added. Number of items in list: ' + str(len(LootList)))
+                log.Write('Enough Items Added. Number of items in list: ' + str(len(LootList)))
                 return LootList
-        #print('loop: ' + str(loop))
+        log.Debug('loop: ' + str(loop))
     
-    #print('Sets :' + str(Sets))
-    #print('Number: ' + str(Number))
-    #print('Number of items in list: ' + str(len(LootList)))
+    log.Debug('Sets :' + str(Sets))
+    log.Debug('Number: ' + str(Number))
+    log.Debug('Number of items in list: ' + str(len(LootList)))
     return LootList
 
-def formatOutput(LootList, diceToUse, Dice):
+def formatOutput(LootList, diceToUse, Dice, log):
     output = f'\nRoll a {diceToUse} to determine your loot.\n\n'
-    diceRangeList = diceDistributionBuilder(LootList, diceToUse, Dice)
+    diceRangeList = diceDistributionBuilder(LootList, diceToUse, Dice, log)
 
     if len(LootList) != len(diceRangeList):
-        print('Something went wrong, the number of loot items doesn not match the dice ranges. Internal code error.')
+        log.Error('Something went wrong, the number of loot items doesn not match the dice ranges. Internal code error.')
         exit(1)
 
     for x, item in enumerate(LootList):
@@ -117,15 +118,15 @@ def formatOutput(LootList, diceToUse, Dice):
 
     return output
 
-def diceDistributionBuilder(LootList, diceToUse, Dice):
+def diceDistributionBuilder(LootList, diceToUse, Dice, log):
     LootListSize = len(LootList)
-    #print(f"{Dice[diceToUse]} / {LootListSize}")
+    log.Debug(f"{Dice[diceToUse]} / {LootListSize}")
     diceRange = round(Dice[diceToUse] / LootListSize)
     diceRangeBonus = Dice[diceToUse] % LootListSize
 
-    #print('Dice to use: ' + diceToUse)
-    #print(diceRange)
-    #print(diceRangeBonus)
+    log.Debug('Dice to use: ' + diceToUse)
+    log.Debug(diceRange)
+    log.Debug(diceRangeBonus)
 
     diceRangeList = []
 
@@ -135,8 +136,8 @@ def diceDistributionBuilder(LootList, diceToUse, Dice):
             diceRangeList[item] += 1
             diceRangeBonus -= 1
 
-    #print(diceRangeList)
-    #print(sum(diceRangeList))
+    log.Debug(diceRangeList)
+    log.Debug(sum(diceRangeList))
 
     number = 1
 
@@ -148,7 +149,7 @@ def diceDistributionBuilder(LootList, diceToUse, Dice):
             diceRangeList[i] = f"{number}-{number + diceRangeList[i] - 1}"
         number += tmpNum
 
-    #print(diceRangeList)
+    log.Debug(diceRangeList)
 
     return diceRangeList
 
@@ -156,6 +157,9 @@ def diceDistributionBuilder(LootList, diceToUse, Dice):
 def main():
     config = json.load(open('./Configs/config.json')) #refactor this into a real config object
     args = ArgParser(sys.argv[1:], config)
+    log = logger.Logger(args.verbose)
+    VerifyArgs(args, config, log)
+
     LootJson = json.load(open(args.jsonPath))
     DistributionPercentages = config['DistributionPercentages']
     Dice = config['Dice']
@@ -163,12 +167,12 @@ def main():
     SetsList = args.sets.split(',')
     diceToUse = matchNumberToDice(args.number, Dice)
 
-    LootList = GenerateLootList(LootJson, args.number, SetsList, DistributionPercentages)
-    #print(LootList)
+    LootList = GenerateLootList(LootJson, args.number, SetsList, DistributionPercentages, log)
+    log.Debug(LootList)
 
-    output = formatOutput(LootList, diceToUse, Dice)
+    output = formatOutput(LootList, diceToUse, Dice, log)
 
-    print(output)
+    log.Write(output)
 
     return
 
