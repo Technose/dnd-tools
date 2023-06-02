@@ -165,11 +165,11 @@ def main():
     Dice = config['Dice']
 
     SetsList = args.sets.split(',')
-    diceToUse = matchNumberToDice(args.number, Dice)
 
     LootList = GenerateLootList(LootJson, args.number, SetsList, DistributionPercentages, log)
     log.Debug(LootList)
 
+    diceToUse = matchNumberToDice(len(LootList), Dice)
     output = formatOutput(LootList, diceToUse, Dice, log)
 
     log.Write(output)
