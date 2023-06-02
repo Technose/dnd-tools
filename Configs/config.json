@@ -1,15 +1,5 @@
 {
-    "DistributionPercentages" : {
-        "common": 1,
-        "uncommon": 28, 
-        "rare": 32, 
-        "very rare": 22, 
-        "legendary": 14, 
-        "artifact": 2, 
-        "sentient": 1
-    },
-
-    "Sets" : "common,uncommon,rare,very rare,legendary,artifact,sentient",
+    "Sets" : "common,uncommon,rare,very rare,legendary",
     
     "Dice" : {
         "d6" : 6,

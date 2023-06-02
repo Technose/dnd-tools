@@ -69,7 +69,7 @@ def CalculateDistribution(Number, Distribution, log):
         else:
             DistributionNumbers[set] = percent
 
-    log.Debug('Distribution: ' + str(DistributionNumbers))
+    log.Debug('Distribution Percentages: ' + str(DistributionNumbers))
 
     return DistributionNumbers
         
@@ -153,6 +153,23 @@ def diceDistributionBuilder(LootList, diceToUse, Dice, log):
 
     return diceRangeList
 
+def calculateDistributionPercentages(LootJson, SetList, log):
+    totalItems = 0
+    itemsPerRarity = {}
+    for rarity in SetList:
+        itemsPerRarity[rarity] = len(LootJson[rarity])
+        totalItems += len(LootJson[rarity])
+    log.Debug('Sets: ' + str(SetList))
+    log.Debug('Total Items: ' + str(totalItems))
+    log.Debug('Items Per Rarity: ' + str(itemsPerRarity))
+
+    distribution = {}
+    for rarity in SetList:
+        distribution[rarity] = round(itemsPerRarity[rarity] / totalItems * 100)
+
+    log.Debug('Distribution Percentages: ' + str(distribution))
+    return distribution
+
 
 def main():
     config = json.load(open('./Configs/config.json')) #refactor this into a real config object
@@ -161,10 +178,10 @@ def main():
     VerifyArgs(args, config, log)
 
     LootJson = json.load(open(args.jsonPath))
-    DistributionPercentages = config['DistributionPercentages']
     Dice = config['Dice']
-
     SetsList = args.sets.split(',')
+
+    DistributionPercentages = calculateDistributionPercentages(LootJson, SetsList, log)
 
     LootList = GenerateLootList(LootJson, args.number, SetsList, DistributionPercentages, log)
     log.Debug(LootList)
